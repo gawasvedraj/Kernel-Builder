@@ -24,10 +24,10 @@ jobs:
           lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig ca-certificates bc cpio imagemagick \
           bsdmainutils lz4 aria2 rclone ssh-client libncurses5 libssl-dev rsync schedtool python-is-python3 libarchive-tools python3 zstd
 
-      - name: Set swap to 20G
+      - name: Set swap to 10G
         uses: pierotofy/set-swap-space@master
         with:
-           swap-size-gb: 20
+           swap-size-gb: 10
 
       - name: Clone kernel repo
         run: |
@@ -43,8 +43,28 @@ jobs:
           echo "Building kernel"
           ./kranul-build.sh
 
-      - name: Upload
-        run: |
-          cd kernel
-          wget https://raw.githubusercontent.com/As9124k82134/pdup/master/pdup && chmod +x pdup
-          ./pdup builds/*.zip
+      - name: Upload ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZIPs
+          path: ./builds/*.zip
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          
+      - name: Release Assets
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./builds/*.zip
+          asset_name: ./builds/*.zip
+          asset_content_type: zip/archive 
