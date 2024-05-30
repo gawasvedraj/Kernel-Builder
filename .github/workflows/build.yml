@@ -59,14 +59,34 @@ jobs:
           URL=$(./pdup builds/*.zip | grep -o 'http[s]\?://[^ ]\+')
           echo "URL=$URL" >> $GITHUB_ENV
 
+      - name: Extract filename from URL
+        id: extract_filename
+        run: |
+          FILENAME=$(basename ${{ env.URL }})
+          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
+
+      - name: Download file from URL
+        run: |
+          wget ${{ env.URL }}
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
-           tag_name: 'v1.0.0'  # Change this to your versioning strategy
-           release_name: 'Release v1.0.0'
-           body: ${{ env.URL }}
-           draft: false
-           prerelease: false
+          tag_name: 'v1.0.0'  # Change this to your versioning strategy
+          release_name: 'Release v1.0.0'
+          body: 'Release with asset from URL'
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.FILENAME }}
+          asset_name: ${{ env.FILENAME }}
+          asset_content_type: application/zip
