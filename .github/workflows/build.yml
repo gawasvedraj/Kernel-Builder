@@ -51,23 +51,17 @@ jobs:
         run: |
           cd kernel
           wget https://raw.githubusercontent.com/As9124k82134/pdup/master/pdup && chmod +x pdup
-
-      - name: Run pdup
-        id: run_pdup
-        run: |
-          cd kernel
-          URL=$(./pdup builds/*.zip | grep -o 'http[s]\?://[^ ]\+')
+          OUTPUT=$(./pdup builds/*.zip)
+          echo "$OUTPUT" > pdup_output.txt
+          echo "$OUTPUT"
+          URL=$(echo "$OUTPUT" | grep -o 'http[s]\?://[^ ]\+')
+          FILENAME=$(echo "$OUTPUT" | grep -o 'Uploading \[.*\].zip' | sed 's/Uploading \[\(.*\)\].zip/\1.zip/')
           echo "URL=$URL" >> $GITHUB_ENV
-
-      - name: Extract filename from URL
-        id: extract_filename
-        run: |
-          FILENAME=$(basename ${{ env.URL }})
           echo "FILENAME=$FILENAME" >> $GITHUB_ENV
 
       - name: Download file from URL
         run: |
-          wget ${{ env.URL }}
+          wget -O ${{ env.FILENAME }} ${{ env.URL }}
 
       - name: Create Release
         id: create_release
