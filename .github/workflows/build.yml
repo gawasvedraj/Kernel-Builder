@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-         
+
       - name: Setup packages
         run: |
           sudo apt-get update -y
@@ -31,7 +31,7 @@ jobs:
       - name: Set swap to 10G
         uses: pierotofy/set-swap-space@master
         with:
-           swap-size-gb: 10
+          swap-size-gb: 10
 
       - name: Clone kernel repo
         run: |
@@ -46,6 +46,21 @@ jobs:
           wget https://raw.githubusercontent.com/Burhanverse/build-kernel-circleci/master/kranul-build.sh && chmod +x ./kranul-build.sh
           echo "Building kernel"
           ./kranul-build.sh
+
+      - name: Upload kernel zip as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel_fastboot
+          path: kernel/builds/*.zip
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: kernel/builds/*.zip
+          tag: ${{ github.sha }}
+          name: "Release ${{ github.sha }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Download pdup
         run: |
