@@ -37,7 +37,7 @@ jobs:
         run: |
           git clone https://github.com/Burhanverse/kernel.git -b stable --depth=500 kernel
           cd kernel 
-          sed -i 's/^CONFIG_LOCALVERSION=".*"/CONFIG_LOCALVERSION="-Black"/' arch/arm64/configs/lancelot_defconfig
+          sed -i 's/^CONFIG_LOCALVERSION=".*"/CONFIG_LOCALVERSION="-Black"/' arch/arm64/configs/lava_defconfig
 
       - name: Build
         run: |
