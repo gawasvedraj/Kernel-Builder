@@ -43,7 +43,7 @@ jobs:
         run: |
           cd kernel
           wget https://raw.githubusercontent.com/burhancodes/Kernel-Builder/master/config.env
-          wget https://raw.githubusercontent.com/burhancodes/Kernel-Builder/master/build.sh && chmod +x ./kranul-build.sh
+          wget https://raw.githubusercontent.com/burhancodes/Kernel-Builder/master/build.sh && chmod +x ./build.sh
           echo "Building kernel"
           ./build.sh
 
