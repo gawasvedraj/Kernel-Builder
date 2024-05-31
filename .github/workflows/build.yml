@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-         
+
       - name: Setup packages
         run: |
           sudo apt-get update -y
@@ -31,7 +31,7 @@ jobs:
       - name: Set swap to 10G
         uses: pierotofy/set-swap-space@master
         with:
-           swap-size-gb: 10
+          swap-size-gb: 10
 
       - name: Clone kernel repo
         run: |
@@ -47,40 +47,33 @@ jobs:
           echo "Building kernel"
           ./kranul-build.sh
 
-      - name: Download pdup
+      - name: Extract Version Info
+        id: extract_version_info
         run: |
-          cd kernel
-          wget https://raw.githubusercontent.com/As9124k82134/pdup/master/pdup && chmod +x pdup
-          OUTPUT=$(./pdup builds/*.zip)
-          echo "$OUTPUT" > pdup_output.txt
-          echo "$OUTPUT"
-          URL=$(echo "$OUTPUT" | grep -o 'http[s]\?://[^ ]\+')
-          FILENAME=$(echo "$OUTPUT" | grep -o 'Uploading \[.*\].zip' | sed 's/Uploading \[\(.*\)\].zip/\1.zip/')
-          echo "URL=$URL" >> $GITHUB_ENV
-          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
+          FILE_NAME=$(basename kernel/builds/*.zip)
+          KERNEL_NAME=$(echo $FILE_NAME | cut -d'-' -f4)
+          VERSION=$(echo $FILE_NAME | cut -d'-' -f5)
+          DEVICE=$(echo $FILE_NAME | cut -d'-' -f6)
+          echo "KERNEL_NAME=${KERNEL_NAME}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "DEVICE=${DEVICE}" >> $GITHUB_ENV
 
-      - name: Download file from URL
+      - name: Create Release Notes
         run: |
-          wget -O ${{ env.FILENAME }} ${{ env.URL }}
+          touch release_notes.txt
+          echo "## Release Notes" > release_notes.txt
+          echo "This release includes the following changes:" >> release_notes.txt
+          echo "- Built kernel from commit ${{ github.sha }}" >> release_notes.txt
+          echo "- Kernel Name: ${{ env.KERNEL_NAME }}" >> release_notes.txt
+          echo "- Version: ${{ env.VERSION }}" >> release_notes.txt
+          echo "- Device: ${{ env.DEVICE }}" >> release_notes.txt
+          echo "- Add any other relevant changes or notes here" >> release_notes.txt
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: 'v1.0.0'  # Change this to your versioning strategy
-          release_name: 'Release v1.0.0'
-          body: 'Release with asset from URL'
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.FILENAME }}
-          asset_name: ${{ env.FILENAME }}
-          asset_content_type: application/zip
+          artifacts: kernel/builds/*.zip
+          tag: "${{ env.VERSION }}"
+          name: "Release ${{ env.VERSION }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          bodyFile: release_notes.txt
