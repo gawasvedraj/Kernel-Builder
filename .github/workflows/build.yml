@@ -53,15 +53,16 @@ jobs:
           name: kernel
           path: kernel/builds/*.zip
 
-
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        run : |
+      - name: Create Release Notes
+        run: |
           touch release_notes.txt
           echo "## Release Notes" > release_notes.txt
           echo "This release includes the following changes:" >> release_notes.txt
           echo "- Built kernel from commit ${{ github.sha }}" >> release_notes.txt
           echo "- Add any other relevant changes or notes here" >> release_notes.txt
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
         with:
           artifacts: kernel/builds/*.zip
           tag: "v1.0.0"
