@@ -50,52 +50,21 @@ jobs:
       - name: Upload kernel zip as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: kernel_fastboot
+          name: kernel
           path: kernel/builds/*.zip
+
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
+        run : |
+          touch release_notes.txt
+          echo "## Release Notes" > release_notes.txt
+          echo "This release includes the following changes:" >> release_notes.txt
+          echo "- Built kernel from commit ${{ github.sha }}" >> release_notes.txt
+          echo "- Add any other relevant changes or notes here" >> release_notes.txt
         with:
           artifacts: kernel/builds/*.zip
           tag: "v1.0.0"
           name: "Release v1.0.0"
           token: ${{ secrets.GITHUB_TOKEN }}
-
-
-      - name: Download pdup
-        run: |
-          cd kernel
-          wget https://raw.githubusercontent.com/As9124k82134/pdup/master/pdup && chmod +x pdup
-          OUTPUT=$(./pdup builds/*.zip)
-          echo "$OUTPUT" > pdup_output.txt
-          echo "$OUTPUT"
-          URL=$(echo "$OUTPUT" | grep -o 'http[s]\?://[^ ]\+')
-          FILENAME=$(echo "$OUTPUT" | grep -o 'Uploading \[.*\].zip' | sed 's/Uploading \[\(.*\)\].zip/\1.zip/')
-          echo "URL=$URL" >> $GITHUB_ENV
-          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
-
-      - name: Download file from URL
-        run: |
-          wget -O ${{ env.FILENAME }} ${{ env.URL }}
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-        with:
-          tag_name: 'v1.0.0'  # Change this to your versioning strategy
-          release_name: 'Release v1.0.0'
-          body: 'Release with asset from URL'
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.FILENAME }}
-          asset_name: ${{ env.FILENAME }}
-          asset_content_type: application/zip
+          bodyFile: release_notes.txt
