@@ -1,4 +1,4 @@
-name: Build Kernel
+name: Kernel Builder
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build Kernel
+    name: Kernel Builder
     runs-on: ubuntu-latest
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
@@ -42,10 +42,10 @@ jobs:
       - name: Build
         run: |
           cd kernel
-          wget https://raw.githubusercontent.com/Burhanverse/build-kernel-circleci/master/config.env
-          wget https://raw.githubusercontent.com/Burhanverse/build-kernel-circleci/master/kranul-build.sh && chmod +x ./kranul-build.sh
+          wget https://raw.githubusercontent.com/burhancodes/Kernel-Builder/master/config.env
+          wget https://raw.githubusercontent.com/burhancodes/Kernel-Builder/master/build.sh && chmod +x ./kranul-build.sh
           echo "Building kernel"
-          ./kranul-build.sh
+          ./build.sh
 
       - name: Extract Version Info
         id: extract_version_info
@@ -75,5 +75,5 @@ jobs:
           artifacts: kernel/builds/*.zip
           tag: "${{ env.VERSION }}"
           name: "Release ${{ env.VERSION }}"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
           bodyFile: release_notes.txt
