@@ -47,11 +47,16 @@ jobs:
           echo "Building kernel"
           ./kranul-build.sh
 
-      - name: Upload kernel zip as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: kernel
-          path: kernel/builds/*.zip
+      - name: Extract Version Info
+        id: extract_version_info
+        run: |
+          FILE_NAME=$(basename kernel/builds/*.zip)
+          KERNEL_NAME=$(echo $FILE_NAME | cut -d'-' -f3)
+          VERSION=$(echo $FILE_NAME | cut -d'-' -f6)
+          DEVICE=$(echo $FILE_NAME | cut -d'-' -f7)
+          echo "KERNEL_NAME=${KERNEL_NAME}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "DEVICE=${DEVICE}" >> $GITHUB_ENV
 
       - name: Create Release Notes
         run: |
@@ -59,13 +64,16 @@ jobs:
           echo "## Release Notes" > release_notes.txt
           echo "This release includes the following changes:" >> release_notes.txt
           echo "- Built kernel from commit ${{ github.sha }}" >> release_notes.txt
+          echo "- Kernel Name: ${{ env.KERNEL_NAME }}" >> release_notes.txt
+          echo "- Version: ${{ env.VERSION }}" >> release_notes.txt
+          echo "- Device: ${{ env.DEVICE }}" >> release_notes.txt
           echo "- Add any other relevant changes or notes here" >> release_notes.txt
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: kernel/builds/*.zip
-          tag: "v1.0.0"
-          name: "Release v1.0.0"
-          token: ${{ secrets.GITHUB_TOKEN }}
-          bodyFile: release_notes.txt
+         artifacts: kernel/builds/*.zip
+         tag: "${{ env.VERSION }}"
+         name: "Release ${{ env.VERSION }}"
+         token: ${{ secrets.GITHUB_TOKEN }}
+         bodyFile: release_notes.txt
