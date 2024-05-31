@@ -35,9 +35,9 @@ jobs:
 
       - name: Clone kernel repo
         run: |
-          git clone https://github.com/Burhanverse/kerneltree.git -b 14 --depth=500 kernel
+          git clone https://github.com/Burhanverse/kernel.git -b stable --depth=500 kernel
           cd kernel 
-          sed -i 's/^CONFIG_LOCALVERSION=".*"/CONFIG_LOCALVERSION="-BlackSapphire"/' arch/arm64/configs/lancelot_defconfig
+          sed -i 's/^CONFIG_LOCALVERSION=".*"/CONFIG_LOCALVERSION="-Black"/' arch/arm64/configs/lancelot_defconfig
 
       - name: Build
         run: |
