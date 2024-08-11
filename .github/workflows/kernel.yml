@@ -33,15 +33,14 @@ jobs:
 
       - name: Clone kernel repo
         run: |
-          git clone https://github.com/Burhanverse/kernel.git -b stable --depth=500 kernel
+          git clone https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/SingkoLab/kernel_xiaomi_stone.git -b new kernel --depth=100
           cd kernel 
-          sed -i 's/^CONFIG_LOCALVERSION=".*"/CONFIG_LOCALVERSION="-Black"/' arch/arm64/configs/lava_defconfig
 
       - name: Build
         run: |
           cd kernel
-          wget https://raw.githubusercontent.com/burhancodes/Kernel-Builder/master/config.env
-          wget https://raw.githubusercontent.com/burhancodes/Kernel-Builder/master/build.sh && chmod +x ./build.sh
+          wget https://raw.githubusercontent.com/SingkoLab/Kernel-Builder/batu/config.env
+          wget https://raw.githubusercontent.com/SingkoLab/Kernel-Builder/batu/build.sh && chmod +x ./build.sh
           echo "Building kernel"
           ./build.sh
 

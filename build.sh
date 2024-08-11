@@ -142,22 +142,22 @@ function kernelsu() {
           KERNEL_VARIANT="${KERNEL_VARIANT}-KernelSU"
           if [ ! -f "${MainPath}/KernelSU/README.md" ]; then
              cd ${MainPath}
-             curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+             curl -LSs "https://raw.githubusercontent.com/SingkoLab/Kernel-Builder/batu/ksu_setup.sh" | bash -
              sed -i "s/CONFIG_KSU=n/CONFIG_KSU=y/g" arch/${ARCH}/configs/${DEVICE_DEFCONFIG}
           fi
     fi
 }
 
 # Enviromental variable
-DEVICE_MODEL="Redmi 9"
-DEVICE_CODENAME="lava"
-export DEVICE_DEFCONFIG="lava_defconfig"
+DEVICE_MODEL="Redmi Note 12 5G/POCO X5 5G"
+DEVICE_CODENAME="stone"
+export DEVICE_DEFCONFIG="holi-qgki_defconfig"
 export ARCH="arm64"
-export KBUILD_BUILD_USER="Aqua"
-export KBUILD_BUILD_HOST="CI"
+export KBUILD_BUILD_USER="nullptr03"
+export KBUILD_BUILD_HOST="SingkoLab"
 export KERNEL_NAME="$(cat "arch/arm64/configs/$DEVICE_DEFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )"
-export SUBLEVEL="v4.14.$(cat "${MainPath}/Makefile" | grep "SUBLEVEL =" | sed 's/SUBLEVEL = *//g')"
-IMAGE="${MainPath}/out/arch/arm64/boot/Image.gz-dtb"
+export SUBLEVEL="v5.4.$(cat "${MainPath}/Makefile" | grep "SUBLEVEL =" | sed 's/SUBLEVEL = *//g')"
+IMAGE="${MainPath}/out/arch/arm64/boot/Image"
 CORES="$(nproc --all)"
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 
@@ -187,7 +187,6 @@ make -j"$CORES" ARCH=$ARCH O=out \
 
    if [[ -f "$IMAGE" ]]; then
       cd ${MainPath}
-      cp out/.config arch/${ARCH}/configs/${DEVICE_DEFCONFIG} && git add arch/${ARCH}/configs/${DEVICE_DEFCONFIG} && git commit -m "defconfig: Regenerate"
       git clone --depth=1 ${AnyKernelRepo} -b ${AnyKernelBranch} ${AnyKernelPath}
       cp $IMAGE ${AnyKernelPath}
    else
