@@ -59,12 +59,7 @@ jobs:
         run: |
           touch release_notes.txt
           echo "## Release Notes" > release_notes.txt
-          echo "This release includes the following changes:" >> release_notes.txt
-          echo "- Built kernel from commit ${{ github.sha }}" >> release_notes.txt
-          echo "- Kernel Name: ${{ env.KERNEL_NAME }}" >> release_notes.txt
-          echo "- Version: ${{ env.VERSION }}" >> release_notes.txt
-          echo "- Device: ${{ env.DEVICE }}" >> release_notes.txt
-          echo "- Add any other relevant changes or notes here" >> release_notes.txt
+          echo "- Initial Release" >> release_notes.txt
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1

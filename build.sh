@@ -151,11 +151,12 @@ function kernelsu() {
 # Enviromental variable
 DEVICE_MODEL="Redmi Note 12 5G/POCO X5 5G"
 DEVICE_CODENAME="stone"
+BUILD_TIME="$(TZ="Asia/Jakarta" date "+%m%d%Y")"
 export DEVICE_DEFCONFIG="holi-qgki_defconfig"
 export ARCH="arm64"
 export KBUILD_BUILD_USER="nullptr03"
 export KBUILD_BUILD_HOST="SingkoLab"
-export KERNEL_NAME="$(cat "arch/arm64/configs/$DEVICE_DEFCONFIG" | grep "CONFIG_LOCALVERSION=" | sed 's/CONFIG_LOCALVERSION="-*//g' | sed 's/"*//g' )"
+export KERNEL_NAME="SingkoKernel"
 export SUBLEVEL="v5.4.$(cat "${MainPath}/Makefile" | grep "SUBLEVEL =" | sed 's/SUBLEVEL = *//g')"
 IMAGE="${MainPath}/out/arch/arm64/boot/Image"
 CORES="$(nproc --all)"
@@ -206,11 +207,10 @@ function zipping() {
     else
       sed -i "s/kernel.string=.*/kernel.string=${KERNEL_NAME} ${SUBLEVEL} ${KERNEL_VARIANT} by ${KBUILD_BUILD_USER} for ${DEVICE_MODEL} (${DEVICE_CODENAME})/g" anykernel.sh
     fi
-    zip -r9 ${KERNEL_VARIANT}-${KERNEL_NAME}-${SUBLEVEL}-${DEVICE_CODENAME}.zip * -x .git README.md *placeholder
+    zip -r9 ${KERNEL_NAME}-${DEVICE_CODENAME}-${BUILD_TIME}.zip * -x .git README.md *placeholder
     cd ..
     mkdir -p builds
-    zipname="$(basename $(echo ${AnyKernelPath}/*.zip | sed "s/.zip//g"))"
-    cp ${AnyKernelPath}/*.zip ./builds/${zipname}-$DATE.zip
+    cp ${AnyKernelPath}/*.zip ./builds/${KERNEL_NAME}-${DEVICE_CODENAME}-${BUILD_TIME}.zip
     cleanup
 }
 
