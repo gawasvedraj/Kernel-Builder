@@ -58,6 +58,5 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Kernel
+          name: ${{ env.KERNEL_NAME }}-${{ env.VERSION }}-${{ env.DEVICE }}
           path: kernel/builds/*.zip
-
