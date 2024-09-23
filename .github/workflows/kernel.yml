@@ -55,10 +55,9 @@ jobs:
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
           echo "DEVICE=${DEVICE}" >> $GITHUB_ENV
 
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
+      - name: Upload
+        uses: actions/upload-artifact@v4
         with:
-          artifacts: kernel/builds/*.zip
-          tag: "${{ github.run_number }}"
-          name: "Release ${{ env.VERSION }}"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Kernel
+          path: kernel/builds/*.zip
+
