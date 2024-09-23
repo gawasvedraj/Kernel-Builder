@@ -142,7 +142,7 @@ function kernelsu() {
           KERNEL_VARIANT="${KERNEL_VARIANT}-KernelSU"
           if [ ! -f "${MainPath}/KernelSU/README.md" ]; then
              cd ${MainPath}
-             curl -LSs "https://raw.githubusercontent.com/gawasvedraj/Kernel-Builder/stone/ksu_setup.sh" | bash -
+             curl -LSs "https://raw.githubusercontent.com/gawasvedraj/Kernel-Builder/stone/ksu_setup.sh" | bash -s main
              sed -i "s/CONFIG_KSU=n/CONFIG_KSU=y/g" arch/${ARCH}/configs/${DEVICE_DEFCONFIG}
              sed -i "s/CONFIG_KSU_SUSFS=n/CONFIG_KSU_SUSFS=y/g" arch/${ARCH}/configs/${DEVICE_DEFCONFIG}
           fi
