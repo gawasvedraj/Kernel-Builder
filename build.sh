@@ -142,8 +142,9 @@ function kernelsu() {
           KERNEL_VARIANT="${KERNEL_VARIANT}-KernelSU"
           if [ ! -f "${MainPath}/KernelSU/README.md" ]; then
              cd ${MainPath}
-             curl -LSs "https://raw.githubusercontent.com/SingkoLab/Kernel-Builder/batu/ksu_setup.sh" | bash -
+             curl -LSs "https://raw.githubusercontent.com/gawasvedraj/Kernel-Builder/stone/ksu_setup.sh" | bash -
              sed -i "s/CONFIG_KSU=n/CONFIG_KSU=y/g" arch/${ARCH}/configs/${DEVICE_DEFCONFIG}
+             sed -i "s/CONFIG_KSU_SUSFS=n/CONFIG_KSU_SUSFS=y/g" arch/${ARCH}/configs/${DEVICE_DEFCONFIG}
           fi
     fi
 }
@@ -151,12 +152,12 @@ function kernelsu() {
 # Enviromental variable
 DEVICE_MODEL="Redmi Note 12 5G/POCO X5 5G"
 DEVICE_CODENAME="stone"
-BUILD_TIME="$(TZ="Asia/Jakarta" date "+%m%d%Y")"
+BUILD_TIME="$(TZ="Asia/Kolkata" date "+%m%d%Y")"
 export DEVICE_DEFCONFIG="holi-qgki_defconfig"
 export ARCH="arm64"
-export KBUILD_BUILD_USER="nullptr03"
-export KBUILD_BUILD_HOST="SingkoLab"
-export KERNEL_NAME="SingkoKernel"
+export KBUILD_BUILD_USER="anon"
+export KBUILD_BUILD_HOST="stone"
+export KERNEL_NAME="Protium"
 export SUBLEVEL="v5.4.$(cat "${MainPath}/Makefile" | grep "SUBLEVEL =" | sed 's/SUBLEVEL = *//g')"
 IMAGE="${MainPath}/out/arch/arm64/boot/Image"
 DTBO_IMAGE="${MainPath}/out/arch/arm64/boot/dtbo.img"

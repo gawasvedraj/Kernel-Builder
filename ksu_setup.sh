@@ -39,7 +39,7 @@ perform_cleanup() {
 # Sets up or update KernelSU environment
 setup_kernelsu() {
     echo "[+] Setting up KernelSU..."
-    test -d "$GKI_ROOT/KernelSU" || git clone https://github.com/tiann/KernelSU && echo "[+] Repository cloned."
+    test -d "$GKI_ROOT/KernelSU" || git clone https://github.com/gawasvedraj/KernelSU && echo "[+] Repository cloned."
     cd "$GKI_ROOT/KernelSU"
     git stash && echo "[-] Stashed current changes."
     if [ "$(git status | grep -Po 'v\d+(\.\d+)*' | head -n1)" ]; then
@@ -51,12 +51,6 @@ setup_kernelsu() {
     else
         git checkout "$1" && echo "[-] Checked out $1." || echo "[-] Checkout default branch"
     fi
-
-    git config user.email "ayamgorengmanis87@gmail.com"
-    git config user.name "nullptr03"
-    
-    git revert 898e9d4f8ca9b2f46b0c6b36b80a872b5b88d899 && echo "Reverting [1.0] Drop Non-GKI Support commits"
-    
     cd "$DRIVER_DIR"
     ln -sf "$(realpath --relative-to="$DRIVER_DIR" "$GKI_ROOT/KernelSU/kernel")" "kernelsu" && echo "[+] Symlink created."
 
