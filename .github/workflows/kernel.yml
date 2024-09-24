@@ -44,16 +44,13 @@ jobs:
           echo "Building kernel"
           ./build.sh
 
-      - name: Extract Version Info
-        id: extract_version_info
+      - name: Error Log
+        if: ${{ failure() }}
         run: |
-          FILE_NAME=$(basename kernel/builds/*.zip)
-          KERNEL_NAME=$(echo $FILE_NAME | cut -d'-' -f4)
-          VERSION=$(echo $FILE_NAME | cut -d'-' -f5)
-          DEVICE=$(echo $FILE_NAME | cut -d'-' -f6)
-          echo "KERNEL_NAME=${KERNEL_NAME}" >> $GITHUB_ENV
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "DEVICE=${DEVICE}" >> $GITHUB_ENV
+          cp kernel/out/output.txt ./build.txt
+          cp kernel/out/out.log ./build.log
+          cat build.txt
+          cat build.log
 
       - name: Upload
         uses: actions/upload-artifact@v4
