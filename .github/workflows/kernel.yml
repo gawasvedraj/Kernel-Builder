@@ -45,7 +45,7 @@ jobs:
           ./build.sh
 
       - name: Error Log
-        if: ${{ failure() }}
+        if: ${{ always() }}
         run: |
           cp kernel/out/output.txt ./build.txt
           cp kernel/out/out.log ./build.log
