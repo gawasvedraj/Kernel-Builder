@@ -49,8 +49,3 @@ jobs:
         with:
           name: kernel
           path: kernel/builds/*.zip
-          
-      - name: Error Log
-        if: ${{ always() }}
-        run: |
-          ls kernel/out
